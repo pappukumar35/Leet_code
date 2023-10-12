@@ -1,31 +1,39 @@
-class Solution1 {
+import java.util.*;
+
+public class Solution1 {
     public int[] fullBloomFlowers(int[][] flowers, int[] people) {
-        int[] sortedPeople = Arrays.copyOf(people, people.length);
-        Arrays.sort(sortedPeople);
-
-        Arrays.sort(flowers, (a, b) -> Arrays.compare(a, b));
-        Map<Integer, Integer> dic = new HashMap();
-        PriorityQueue<Integer> heap = new PriorityQueue();
-
-        int i = 0;
-        for (int person : sortedPeople) {
-            while (i < flowers.length && flowers[i][0] <= person) {
-                heap.add(flowers[i][1]);
-                i++;
-            }
-
-            while (!heap.isEmpty() && heap.peek() < person) {
-                heap.remove();
-            }
-
-            dic.put(person, heap.size());
+        // Create a list of Flower objects to keep track of bloom times
+        List<Flower> flowerList = new ArrayList<>();
+        for (int i = 0; i < flowers.length; i++) {
+            flowerList.add(new Flower(flowers[i][0], flowers[i][1]));
         }
 
-        int[] ans = new int[people.length];
-        for (int j = 0; j < people.length; j++) {
-            ans[j] = dic.get(people[j]);
+        // Sort the list of flowers based on their bloom times
+        Collections.sort(flowerList, (a, b) -> a.bloomTime - b.bloomTime);
+
+        int[] result = new int[people.length];
+        int bloomIndex = 0; // Index to track the current flower in bloom
+
+        for (int i = 0; i < people.length; i++) {
+            int personTime = people[i];
+
+            // Count flowers in full bloom when the person arrives
+            while (bloomIndex < flowerList.size() && flowerList.get(bloomIndex).bloomTime <= personTime) {
+                bloomIndex++;
+            }
+            result[i] = bloomIndex;
         }
 
-        return ans;
+        return result;
+    }
+
+    private class Flower {
+        int bloomTime;
+        int wiltTime;
+
+        public Flower(int bloomTime, int wiltTime) {
+            this.bloomTime = bloomTime;
+            this.wiltTime = wiltTime;
+        }
     }
 }
