@@ -1,46 +1,24 @@
-class Solution {
-    public int minOperations(int[] nums) {
-         int n = nums.length;
-        int ans = n;
-        
-        HashSet<Integer> unique = new HashSet<>();
-        for (int num : nums) {
-            unique.add(num);
-        }
-        
-        int[] newNums = new int[unique.size()];
-        int index = 0;
-        
-        for (int num : unique) {
-            newNums[index++] = num;
-        }
-            
-        Arrays.sort(newNums);
-        
-        for (int i = 0; i < newNums.length; i++) {
-            int left = newNums[i];
-            int right = left + n - 1;
-            int j = binarySearch(newNums, right);
-            int count = j - i;
-            ans = Math.min(ans, n - count);
-        }
-        
-        return ans;
-    }
-    
-    public int binarySearch(int[] newNums, int target) {
-        int left = 0;
-        int right = newNums.length;
-        
-        while (left < right) {
-            int mid = (left + right) / 2;
-            if (target < newNums[mid]) {
-                right = mid;
-            } else {
-                left = mid + 1;
+public class Solution {
+    public int kthGrammar(int n, int k) {
+        // Initialize a flag to track if the values of k and the first element are the same.
+        boolean areValuesSame = true;
+
+        // Calculate the total number of elements in the nth row, which is 2^(n-1).
+        n = (int) Math.pow(2, n - 1);
+
+        // Continue until we reach the first row.
+        while (n != 1) {
+            // Halve the number of elements in the row.
+            n /= 2;
+
+            // If k is in the second half of the row, adjust k and toggle the flag.
+            if (k > n) {
+                k -= n;
+                areValuesSame = !areValuesSame;
             }
         }
-        
-        return left;
+
+        // Return 0 if the flag indicates that the values are the same; otherwise, return 1.
+        return (areValuesSame ? 0 : 1);
     }
 }
